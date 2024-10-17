@@ -18,8 +18,8 @@ blocks:
 
   - name: "Docker Image"
     task:
-      secrets:
-        - name: docker-push
+      # secrets:
+      #   - name: docker-push
       jobs:
         - name: "Build Docker Image"
           commands:
@@ -27,24 +27,24 @@ blocks:
             - cd operately
             - artifact pull workflow version
             - docker build -f Dockerfile.prod -t operately/operately:$(cat version) .
-            - docker push operately/operately:$(cat version)
+            - #docker push operately/operately:$(cat version)
 
-  - name: "GitHub Release"
-    task:
-      secrets:
-        - name: github-release-api-key
-      jobs:
-        - name: "Build GitHub Release"
-          commands:
-            - sem-version erlang 27
-            - kiex install 1.17.0
-            - sem-version elixir 1.17.0
-            - git clone https://github.com/operately/operately.git
-            - cd operately
-            - mix local.rebar --force
-            - artifact pull workflow version
-            - make release.build.singlehost VERSION=$(cat version)
-            - make release.push.github.release VERSION=$(cat version) GITHUB_REPOSITORY=operately/nightly
+  # - name: "GitHub Release"
+  #   task:
+  #     secrets:
+  #       - name: github-release-api-key
+  #     jobs:
+  #       - name: "Build GitHub Release"
+  #         commands:
+  #           - sem-version erlang 27
+  #           - kiex install 1.17.0
+  #           - sem-version elixir 1.17.0
+  #           - git clone https://github.com/operately/operately.git
+  #           - cd operately
+  #           - mix local.rebar --force
+  #           - artifact pull workflow version
+  #           - make release.build.singlehost VERSION=$(cat version)
+  #           - make release.push.github.release VERSION=$(cat version) GITHUB_REPOSITORY=operately/nightly
 
 after_pipeline:
   task:
@@ -53,6 +53,6 @@ after_pipeline:
     jobs:
       - name: "Notify Discord"
         commands:
-          - checkout
-          - artifact pull workflow version
-          - ruby discord.rb $(cat version)
+          - #checkout
+          - #artifact pull workflow version
+          - #ruby discord.rb $(cat version)
