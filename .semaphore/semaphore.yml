@@ -23,4 +23,3 @@ blocks:
             - cd operately
             - artifact pull workflow version
             - 'docker build -f Dockerfile.prod -t operately/operately:$(cat version) .'
-            - null
