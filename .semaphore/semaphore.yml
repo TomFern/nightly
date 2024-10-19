@@ -1,58 +1,25 @@
 version: v1.0
-name: "Operately — Nightly Build"
+name: Operately — Nightly Build
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu2004
-
 blocks:
-  - name: "Version"
+  - name: Version
     task:
       jobs:
-        - name: "Calculate Version"
+        - name: Calculate Version
           commands:
-            - git clone https://github.com/operately/operately.git
+            - 'git clone https://github.com/operately/operately.git'
             - cd operately
             - echo "nightly-build-$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)" > version
             - artifact push workflow version
-
-  - name: "Docker Image"
+  - name: Docker Image
     task:
-      # secrets:
-      #   - name: docker-push
       jobs:
-        - name: "Build Docker Image"
+        - name: Build Docker Image
           commands:
-            - git clone https://github.com/operately/operately.git
+            - 'git clone https://github.com/operately/operately.git'
             - cd operately
             - artifact pull workflow version
-            - docker build -f Dockerfile.prod -t operately/operately:$(cat version) .
-            - #docker push operately/operately:$(cat version)
-
-  # - name: "GitHub Release"
-  #   task:
-  #     secrets:
-  #       - name: github-release-api-key
-  #     jobs:
-  #       - name: "Build GitHub Release"
-  #         commands:
-  #           - sem-version erlang 27
-  #           - kiex install 1.17.0
-  #           - sem-version elixir 1.17.0
-  #           - git clone https://github.com/operately/operately.git
-  #           - cd operately
-  #           - mix local.rebar --force
-  #           - artifact pull workflow version
-  #           - make release.build.singlehost VERSION=$(cat version)
-  #           - make release.push.github.release VERSION=$(cat version) GITHUB_REPOSITORY=operately/nightly
-
-after_pipeline:
-  task:
-    secrets:
-      - name: discord-bot
-    jobs:
-      - name: "Notify Discord"
-        commands:
-          - #checkout
-          - #artifact pull workflow version
-          - #ruby discord.rb $(cat version)
+            - 'docker build -f Dockerfile.prod -t operately/operately:$(cat version) .'
